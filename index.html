@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <title>Rust WASM Minesweeper</title>
     <link rel="stylesheet" href="index.css">
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 </head>
 <body>
     <div id="root">
+        <div class="minesweeper-scoreboard">
+            <div class="minesweeper-counter" id="bomb-counter">
+                001
+            </div>
+            <button class="minesweeper-start-button">
+                🙂
+            </button>
 
+            <div class="minesweeper-counter" id="time-counter">
+                001
+            </div>
+        </div>
+        <div class="minesweeper-container" id="minesweeper-container">
+
+        </div>
     </div>
 
     <script type="module">
@@ -16,7 +31,25 @@
         async function main(){
             await init();
 
-            console.log(GetMinesweeper())
+            let MinesweeperArray = GetMinesweeper()
+
+            let container = document.getElementById("minesweeper-container")
+
+            MinesweeperArray.map((item, y_key) => {
+
+                let cellContainer = document.createElement("div")
+                cellContainer.setAttribute("id", "Cell-"+ y_key)
+                cellContainer.setAttribute("class", "minesweeper-cell-container")
+                container.appendChild(cellContainer)
+
+                item.map((cell, x_key) => {
+                    let div = document.createElement("div")
+                    div.setAttribute("id", "Cell-"+ y_key + "-" + x_key)
+                    div.setAttribute("class", "minesweeper-cell")
+                    cellContainer.appendChild(div)
+                })
+
+            })
         }
 
         main();

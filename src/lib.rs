@@ -10,7 +10,7 @@ extern "C"{
 
 #[wasm_bindgen(js_name = GetMinesweeper)]
 pub fn get_minesweeper() -> JsValue{
-    let minesweeper = Minefield::new(10, 10, 6).expect("Error");
+    let minesweeper = Minefield::new(16, 16, 80).expect("Error");
 
     JsValue::from_serde(&minesweeper.fields).unwrap()
 }
