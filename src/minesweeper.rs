@@ -3,27 +3,28 @@ use rand::prelude::*;
 use std::fmt;
 use std::borrow::{BorrowMut};
 use crate::minesweeper::State::{Hidden, Flagged, Revealed};
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
-struct Minefield{
-    fields : Vec<Vec<Field>>
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Minefield{
+    pub fields : Vec<Vec<Field>>
 }
 
-#[derive(Debug)]
-struct Field{
+#[derive(Debug,Serialize, Deserialize)]
+pub struct Field{
     is_bomb: bool,
     state: State,
     neighbour_bombs: i8
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 enum State{
     Hidden,
     Flagged,
     Revealed
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct Position {
     x : usize,
     y : usize

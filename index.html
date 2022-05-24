@@ -9,5 +9,17 @@
     <div id="root">
 
     </div>
+
+    <script type="module">
+        import init, {GetMinesweeper} from "./pkg/Minesweeper_wasm.js";
+
+        async function main(){
+            await init();
+
+            console.log(GetMinesweeper())
+        }
+
+        main();
+    </script>
 </body>
 </html>

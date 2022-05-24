@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib"]
 
 [dependencies]
 rand = "0.8.5"
+wasm-bindgen = { version= "0.2.80", features = ["serde-serialize"] }
+getrandom = {version = "0.2.6", features = ["js"]}
+serde = {version="1.0.137", features= ["derive"]}
