@@ -46,9 +46,15 @@ body{
 .minesweeper-cell{
     height: 40px;
     width: 40px;
-    border: #e3e3e3 solid 1px;
+    border: #e9e9e9 solid 1px;
 
 }
+
+
+.minesweeper-cell:hover{
+    background: #e3e3e3 ;
+}
+
 .minesweeper-cell-container{
     display: flex;
     flex-direction: row;

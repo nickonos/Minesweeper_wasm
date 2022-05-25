@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Rust WASM Minesweeper</title>
+    <link rel="icon" type="image/x-icon" href="./Minesweeperlogo.jpg">
     <link rel="stylesheet" href="index.css">
     <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 </head>
@@ -26,33 +27,61 @@
     </div>
 
     <script type="module">
-        import init, {GetMinesweeper} from "./pkg/Minesweeper_wasm.js";
+        import init, {GetMinesweeper, ClickField} from "./pkg/Minesweeper_wasm.js";
 
-        async function main(){
-            await init();
+        class MinesweeperClass{
+            constructor() {
+                this.initialize()
+            }
 
-            let MinesweeperArray = GetMinesweeper()
+            initialize = async () => {
+                await init()
+                this.MinesweeperArray = GetMinesweeper()
 
-            let container = document.getElementById("minesweeper-container")
+                let container = document.getElementById("minesweeper-container")
 
-            MinesweeperArray.map((item, y_key) => {
+                this.MinesweeperArray.map((item, y_key) => {
 
-                let cellContainer = document.createElement("div")
-                cellContainer.setAttribute("id", "Cell-"+ y_key)
-                cellContainer.setAttribute("class", "minesweeper-cell-container")
-                container.appendChild(cellContainer)
+                    let cellContainer = document.createElement("div")
+                    cellContainer.setAttribute("id", "Cell-Container-"+ y_key)
+                    cellContainer.setAttribute("class", "minesweeper-cell-container")
+                    container.appendChild(cellContainer)
 
-                item.map((cell, x_key) => {
-                    let div = document.createElement("div")
-                    div.setAttribute("id", "Cell-"+ y_key + "-" + x_key)
-                    div.setAttribute("class", "minesweeper-cell")
-                    cellContainer.appendChild(div)
+                    item.map((cell, x_key) => {
+                        let div = document.createElement("div")
+                        div.setAttribute("id", "Cell-"+ y_key + "-" + x_key)
+                        div.setAttribute("class", "minesweeper-cell")
+                        div.onclick = (e => this.onCellClick(e))
+                        cellContainer.appendChild(div)
+                    })
+
                 })
+            }
 
-            })
+            onCellClick(e){
+                let isFlag = e.ctrlKey
+
+                let Cell = e.target
+
+                let arr = Cell.id.split('-')
+
+                let y = arr[1]
+                let x = arr[2]
+                let input = {
+                    fields : this.MinesweeperArray,
+                    x: x,
+                    y: y
+                }
+                if (!isFlag){
+                    ClickField(input)
+                }
+
+                console.log(y,x)
+                console.log(e)
+            }
         }
 
-        main();
+        let ms = new MinesweeperClass()
     </script>
 </body>
 </html>

@@ -5,12 +5,12 @@ use std::borrow::{BorrowMut};
 use crate::minesweeper::State::{Hidden, Flagged, Revealed};
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Minefield{
     pub fields : Vec<Vec<Field>>
 }
 
-#[derive(Debug,Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Field{
     is_bomb: bool,
     state: State,
@@ -25,9 +25,9 @@ enum State{
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-struct Position {
-    x : usize,
-    y : usize
+pub struct Position {
+   pub x : usize,
+   pub y : usize
 }
 
 
@@ -53,6 +53,13 @@ impl Minefield{
         })
     }
 
+    pub fn from_fields(fields: Vec<Vec<Field>>) -> Minefield {
+        Minefield{
+            fields
+        }
+    }
+
+
     pub fn click_field(&mut self, position: Position) -> Result<(), Error>{
         let res = self.fields[position.y][position.x].is_clickable();
 
@@ -67,6 +74,7 @@ impl Minefield{
         };
 
         if bomb{
+            self.lost_game(position);
             return Err(Error::default())
         }
 
