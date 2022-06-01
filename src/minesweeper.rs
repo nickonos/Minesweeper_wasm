@@ -4,12 +4,25 @@ use std::fmt;
 use std::borrow::{BorrowMut};
 use crate::minesweeper::State::{Hidden, Flagged, Revealed};
 use serde::{Serialize, Deserialize};
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Minefield{
-    pub fields : Vec<Vec<Field>>
+    fields : Vec<Vec<Field>>,
+    pub height : usize,
+    pub width: usize,
+    pub bombs: usize,
 }
 
+#[wasm_bindgen]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Position {
+    pub x : usize,
+    pub y : usize
+}
+
+#[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Field{
     is_bomb: bool,
@@ -17,83 +30,17 @@ pub struct Field{
     neighbour_bombs: i8
 }
 
+#[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-enum State{
+pub enum State{
     Hidden,
     Flagged,
     Revealed
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct Position {
-   pub x : usize,
-   pub y : usize
-}
-
-
-impl Minefield{
-    pub fn new(
-        width: usize,
-        height : usize,
-        bombs : usize
-    ) -> Result<Minefield, Error> {
-        let mut rng = rand::thread_rng();
-        let mut bomb :Vec<Position> = Vec::with_capacity(bombs);
-
-        for _ in 0..bombs{
-            let w = rng.gen_range(0..width);
-            let h = rng.gen_range(0..height);
-
-            bomb.push(Position{x : w, y : h})
-        }
-
-
-        Ok(Minefield{
-            fields: Minefield::generate_2d_field_vec(width, height, bomb).expect("Incorrect input")
-        })
-    }
-
-    pub fn from_fields(fields: Vec<Vec<Field>>) -> Minefield {
-        Minefield{
-            fields
-        }
-    }
-
-
-    pub fn click_field(&mut self, position: Position) -> Result<(), Error>{
-        let res = self.fields[position.y][position.x].is_clickable();
-
-        let mut bomb : bool = false;
-
-        let is_clickable = match res {
-            Ok(v) => v,
-            Err(_) => {
-                bomb = true;
-                false
-            }
-        };
-
-        if bomb{
-            self.lost_game(position);
-            return Err(Error::default())
-        }
-
-        if !is_clickable{
-            return Ok(())
-        }
-
-        let bombs = self.check_neighbouring_bombs(&position);
-
-        self.fields[position.y][position.x].reveal(bombs);
-
-        Ok(())
-    }
-
+impl Minefield {
     fn check_neighbouring_bombs(&self , position :&Position) -> i8{
         let mut bombs : i8 = 0;
-        if position.x > 0 {
-
-        }
 
         //Top-Left
         if position.y > 0 && position.x > 0 && self.fields[position.y - 1][position.x - 1].is_bomb {
@@ -147,18 +94,6 @@ impl Minefield{
 
     }
 
-    pub fn flag_field(& mut self, position: Position) -> Result<(), Error>{
-        let field = self.fields[position.y][position.x].borrow_mut();
-
-        match field.state {
-            State::Revealed => Err(Error::default()),
-            State::Flagged => Ok(field.state = Hidden),
-            State::Hidden => Ok(field.state = Flagged)
-        }.expect("Cannot flag Revealed field");
-
-        Ok(())
-    }
-
     fn generate_2d_field_vec(
         width: usize,
         height : usize,
@@ -196,6 +131,79 @@ impl Minefield{
         }
 
         Ok(fields)
+    }
+
+}
+
+#[wasm_bindgen]
+impl Minefield{
+    pub fn new(
+        width: usize,
+        height : usize,
+        bombs : usize
+    ) -> Minefield {
+        let mut rng = rand::thread_rng();
+        let mut bomb :Vec<Position> = Vec::with_capacity(bombs);
+
+        for _ in 0..bombs{
+            let w = rng.gen_range(0..width);
+            let h = rng.gen_range(0..height);
+
+            bomb.push(Position{x : w, y : h})
+        }
+
+
+        Minefield{
+            fields: Minefield::generate_2d_field_vec(width, height, bomb).expect("Incorrect input"),
+            width,
+            height,
+            bombs
+        }
+    }
+
+    pub fn click_field(&mut self, position: Position) -> bool{
+        let res = self.fields[position.y][position.x].is_clickable();
+
+        let mut bomb : bool = false;
+
+        let is_clickable = match res {
+            Ok(v) => v,
+            Err(_) => {
+                bomb = true;
+                false
+            }
+        };
+
+        if bomb{
+            self.lost_game(position);
+            return false
+        }
+
+        if !is_clickable{
+            return true
+        }
+
+        let bombs = self.check_neighbouring_bombs(&position);
+
+        self.fields[position.y][position.x].reveal(bombs);
+
+        true
+    }
+
+    pub fn fields(&self) -> *const Vec<Field> {
+        self.fields.as_ptr()
+    }
+
+    pub fn flag_field(& mut self, position: Position) -> bool{
+        let field = self.fields[position.y][position.x].borrow_mut();
+
+        match field.state {
+            State::Revealed => Err(Error::default()),
+            State::Flagged => Ok(field.state = Hidden),
+            State::Hidden => Ok(field.state = Flagged)
+        }.expect("Cannot flag Revealed field");
+
+        true
     }
 }
 
