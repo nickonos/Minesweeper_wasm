@@ -5,6 +5,9 @@ use std::borrow::{BorrowMut};
 use crate::minesweeper::State::{Hidden, Flagged, Revealed};
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
+use js_sys::*;
+use std::iter::Iterator;
+use web_sys::console;
 
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -44,46 +47,46 @@ impl Minefield {
 
         //Top-Left
         if position.y > 0 && position.x > 0 && self.fields[position.y - 1][position.x - 1].is_bomb {
-            bombs += bombs;
+            bombs += 1;
         }
         //Mid-Left
         if position.x > 0  && self.fields[position.y][position.x - 1].is_bomb {
-            bombs += bombs;
+            bombs += 1;
         }
 
         //Top-Mid
         if position.y > 0 && self.fields[position.y - 1][position.x].is_bomb{
-            bombs += bombs;
+            bombs += 1;
         }
 
         if position.y > 0 {
             //Bot-Left
             if position.y - 1 < self.fields.len() && position.x > 0 && self.fields[position.y + 1][position.x - 1].is_bomb{
-                bombs += bombs;
+                bombs += 1;
             }
 
             //Bot-Mid
             if position.y - 1 < self.fields.len() && self.fields[position.y + 1][position.x].is_bomb{
-                bombs += bombs;
+                bombs += 1;
             }
         }
 
         if position.x > 0 {
             //Top-Right
             if position.y > 0 && position.x - 1 < self.fields[0].len() && self.fields[position.y - 1][position.x + 1].is_bomb{
-                bombs += bombs;
+                bombs += 1;
             }
 
             //Mid-Right
             if position.x - 1 < self.fields[0].len() && self.fields[position.y][position.x + 1].is_bomb{
-                bombs += bombs;
+                bombs += 1;
             }
         }
 
         if position.x > 0 && position.y > 0 {
             //Bot-Right
             if position.y - 1 < self.fields.len() && position.x - 1 < self.fields[0].len() && self.fields[position.y + 1][position.x + 1].is_bomb{
-                bombs += bombs;
+                bombs += 1;
             }
         }
 
@@ -97,7 +100,7 @@ impl Minefield {
     fn generate_2d_field_vec(
         width: usize,
         height : usize,
-        bombs : Vec<Position>
+        bombs : Vec<&Position>
     ) -> Result<Vec<Vec<Field>>, Error>{
         if height <= 0 {
             return Err(Error::default());
@@ -115,7 +118,7 @@ impl Minefield {
     fn generate_field_vec(
         size: usize,
         pos_y: usize,
-        bombs: &Vec<Position>
+        bombs: &Vec<&Position>
     ) -> Result<Vec<Field>, Error> {
 
         if size <= 0 {
@@ -125,7 +128,7 @@ impl Minefield {
         let mut fields : Vec<Field> = Vec::with_capacity(size);
 
         for pos_x in 0..size {
-            let is_bomb = bombs.iter().find(|x| **x == Position{x: pos_x, y : pos_y}).is_some();
+            let is_bomb = bombs.iter().find(|x| ***x == Position{x: pos_x, y : pos_y}).is_some();
 
             fields.push(Field::new(is_bomb))
         }
@@ -136,6 +139,19 @@ impl Minefield {
 }
 
 #[wasm_bindgen]
+impl Position{
+    pub fn new (
+        x : usize,
+        y : usize
+    ) -> Position{
+        Position{
+            x,
+            y
+        }
+    }
+}
+
+#[wasm_bindgen]
 impl Minefield{
     pub fn new(
         width: usize,
@@ -143,13 +159,18 @@ impl Minefield{
         bombs : usize
     ) -> Minefield {
         let mut rng = rand::thread_rng();
-        let mut bomb :Vec<Position> = Vec::with_capacity(bombs);
+        let mut bomb :Vec<&Position> = Vec::with_capacity(bombs);
+        let mut fields : Vec<Position> = Vec::with_capacity(width * height);
+
+        for y in 0..height{
+            for x in 0..width{
+                fields.push(Position::new(x ,y))
+            }
+        }
 
         for _ in 0..bombs{
-            let w = rng.gen_range(0..width);
-            let h = rng.gen_range(0..height);
-
-            bomb.push(Position{x : w, y : h})
+            let i = rng.gen_range(0..fields.len());
+            bomb.push(&fields[i])
         }
 
 
@@ -160,6 +181,34 @@ impl Minefield{
             bombs
         }
     }
+
+    pub fn get_minefield(&self) -> js_sys::Uint32Array{
+        let mut uint_vec: Vec<u32> = Vec::new();
+
+        for fieldarr in &self.fields {
+            for field in fieldarr {
+                match field.state {
+                    Hidden => {
+                        uint_vec.push(10)
+                    }
+                    Flagged => {
+                        uint_vec.push(11);
+                    }
+                    Revealed => {
+                        if field.is_bomb{
+                            uint_vec.push(12)
+                        }else{
+                            uint_vec.push(field.neighbour_bombs as u32)
+                        }
+
+                    }
+                }
+            }
+        }
+
+        js_sys::Uint32Array::from(&uint_vec[..])
+    }
+
 
     pub fn click_field(&mut self, position: Position) -> bool{
         let res = self.fields[position.y][position.x].is_clickable();
@@ -252,6 +301,7 @@ impl Field{
     }
 
     pub fn reveal(&mut self, neighbour_bombs: i8){
+        console::log_1(&neighbour_bombs.into());
         self.neighbour_bombs = neighbour_bombs;
         self.state = Revealed;
     }
