@@ -42,52 +42,42 @@ pub enum State{
 }
 
 impl Minefield {
-    fn check_neighbouring_bombs(&self , position :&Position) -> i8{
+    fn check_neighbouring_bombs(&self, p:&Position) -> i8{
         let mut bombs : i8 = 0;
 
-        //Top-Left
-        if position.y > 0 && position.x > 0 && self.fields[position.y - 1][position.x - 1].is_bomb {
-            bombs += 1;
-        }
-        //Mid-Left
-        if position.x > 0  && self.fields[position.y][position.x - 1].is_bomb {
+        //check lower bounds
+        if p.x > 0 && self.fields[p.y][p.x - 1].is_bomb{
             bombs += 1;
         }
 
-        //Top-Mid
-        if position.y > 0 && self.fields[position.y - 1][position.x].is_bomb{
+        if p.y > 0 && self.fields[p.y - 1][p.x].is_bomb{
             bombs += 1;
         }
 
-        if position.y > 0 {
-            //Bot-Left
-            if position.y - 1 < self.fields.len() && position.x > 0 && self.fields[position.y + 1][position.x - 1].is_bomb{
-                bombs += 1;
-            }
-
-            //Bot-Mid
-            if position.y - 1 < self.fields.len() && self.fields[position.y + 1][position.x].is_bomb{
-                bombs += 1;
-            }
+        if p.x > 0 && p.y > 0 && self.fields[p.y - 1][p.x - 1].is_bomb{
+            bombs += 1;
         }
 
-        if position.x > 0 {
-            //Top-Right
-            if position.y > 0 && position.x - 1 < self.fields[0].len() && self.fields[position.y - 1][position.x + 1].is_bomb{
-                bombs += 1;
-            }
-
-            //Mid-Right
-            if position.x - 1 < self.fields[0].len() && self.fields[position.y][position.x + 1].is_bomb{
-                bombs += 1;
-            }
+        //check upper bounds
+        if p.x < self.width - 1 && self.fields[p.y][p.x + 1].is_bomb{
+            bombs += 1;
         }
 
-        if position.x > 0 && position.y > 0 {
-            //Bot-Right
-            if position.y - 1 < self.fields.len() && position.x - 1 < self.fields[0].len() && self.fields[position.y + 1][position.x + 1].is_bomb{
-                bombs += 1;
-            }
+        if p.y < self.height -1 && self.fields[p.y + 1][p.x].is_bomb{
+            bombs += 1;
+        }
+
+        if p.x < self.width - 1 && p.y < self.height -1 && self.fields[p.y + 1][p.x + 1].is_bomb{
+            bombs += 1;
+        }
+
+        //check corner bounds
+        if p.x < self.width - 1 && p.y > 0 && self.fields[p.y -1][p.x + 1].is_bomb{
+            bombs += 1;
+        }
+
+        if p.x > 0 && p.y < self.height - 1 && self.fields[p.y + 1][p.x - 1].is_bomb{
+            bombs += 1;
         }
 
         bombs
@@ -134,6 +124,44 @@ impl Minefield {
         }
 
         Ok(fields)
+    }
+
+    fn reveal_neighbouring_bombs(&mut self, p : &Position){
+        //check lower bounds
+        if p.x > 0{
+            self.click_field(Position::new(p.x - 1, p.y));
+        }
+
+        if p.y > 0{
+            self.click_field(Position::new(p.x, p.y - 1));
+        }
+
+        if p.x > 0 && p.y > 0 {
+            self.click_field(Position::new(p.x - 1, p.y - 1));
+        }
+
+        //check upper bounds
+        if p.x < self.width - 1{
+            self.click_field(Position::new(p.x + 1, p.y));
+        }
+
+        if p.y < self.height -1{
+            self.click_field(Position::new(p.x, p.y + 1));
+        }
+
+        if p.x < self.width - 1 && p.y < self.height - 1{
+            self.click_field(Position::new(p.x + 1, p.y + 1));
+        }
+
+        //check corner bounds
+        if p.x < self.width - 1 && p.y > 0 {
+            self.click_field(Position::new(p.x + 1, p.y - 1));
+        }
+
+        if p.x > 0 && p.y < self.height - 1{
+            self.click_field(Position::new(p.x - 1, p.y + 1));
+        }
+
     }
 
 }
@@ -236,6 +264,10 @@ impl Minefield{
 
         self.fields[position.y][position.x].reveal(bombs);
 
+        if bombs == 0 {
+            self.reveal_neighbouring_bombs(&position);
+        }
+
         true
     }
 
@@ -301,7 +333,6 @@ impl Field{
     }
 
     pub fn reveal(&mut self, neighbour_bombs: i8){
-        console::log_1(&neighbour_bombs.into());
         self.neighbour_bombs = neighbour_bombs;
         self.state = Revealed;
     }

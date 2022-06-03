@@ -7,11 +7,11 @@ class MinesweeperClass{
 
     initialize = async () => {
         await init()
-        console.log("test")
+
         this.Minefield = Minefield.new(30, 16, 80);
 
         let mines = this.Minefield.get_minefield();
-        let container = document.getElementById("minesweeper-container")
+        let container = document.getElementById("minefield")
 
         let cell_container;
         mines.map((item, y_key) => {
@@ -34,6 +34,7 @@ class MinesweeperClass{
 
     updateMinefield(){
         let array = this.Minefield.get_minefield()
+
         array.map((item, key) => {
             let cell = document.getElementById("Cell-" + Math.floor(key/30)  + "-" + key % 30)
 
@@ -50,7 +51,7 @@ class MinesweeperClass{
             }
 
             if (item < 10){
-                cell.textContent = item.toString();
+                cell.classList.add("type" + item.toString());
             }
         })
 

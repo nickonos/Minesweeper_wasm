@@ -8,52 +8,11 @@ body{
     justify-content: center;
     display: flex;
 }
-.minesweeper-scoreboard{
-    flex-direction: row;
-    display: flex;
-    border: 4px solid darkgray;
-    margin-bottom: 5px;
-}
 
-.minesweeper-container{
-    background: lightgray;
-    border: 4px solid darkgray;
+/*Minesweeper*/
+.minefield{
     display: flex;
     flex-direction: column;
-    padding: 1px;
-}
-
-.minesweeper-counter{
-    background: black;
-    font-size: 2vw;
-    color: red;
-    font-family: Orbitron, sans-serif;
-    margin: 5px;
-}
-
-.minesweeper-start-button{
-    font-size: 2vw;
-    padding: 0;
-    background: lightgray;
-    border: 2px solid darkgray;
-    margin: 2px auto;
-}
-
-.minesweeper-start-button:hover{
-    background: #e9e9e9;
-}
-
-.minesweeper-cell{
-    height: 40px;
-    width: 40px;
-    border: #e9e9e9 solid 1px;
-    font-size: 30px;
-    text-align: center;
-}
-
-
-.minesweeper-cell:hover{
-    background: #e3e3e3 ;
 }
 
 .minesweeper-cell-container{
@@ -61,12 +20,213 @@ body{
     flex-direction: row;
 }
 
+.minesweeper-cell{
+    height: 40px;
+    width: 40px;
+    background-image: url("root/Cells/closed.svg");
+    background-size: 40px 40px;
+    font-size: 30px;
+    text-align: center;
+}
+
+/*Scoreboard*/
+.scoreboard-container{
+    flex-direction: row;
+    display: flex;
+}
+
+.scoreboard-start-button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    margin: 2px auto;
+}
+
+.scoreboard-start-button{
+    all: unset;
+    font-size: 20px;
+    padding: 0;
+    background-image: url("root/Cells/closed.svg");
+    background-size: 100% 100%;
+    height: 40px;
+    width: 40px;
+    margin: 2px auto;
+    border: 0;
+    text-align: center;
+}
+
+.scoreboard-counter{
+    background: black;
+    font-size: 2vw;
+    color: red;
+    font-family: Orbitron, sans-serif;
+    margin: 5px;
+}
+
+/*Borders*/
+.minefield-top-border{
+    height: 20px;
+    background-size: 100% 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.minefield-top-border-left{
+    background-image: url("root/Borders/middle_left.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.minefield-top-border-horizontal{
+    background-image: url("root/Borders/border_horizontal.png");
+    height: inherit;
+    background-size: inherit;
+    width: 100%
+}
+
+.minefield-top-border-right{
+    background-image: url("root/Borders/middle_right.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.minefield-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.minefield-right-border{
+    background-image: url("root/Borders/border_vertical.png");
+    width: 20px;
+    background-size: 100% 100%;
+}
+
+.minefield-left-border{
+    background-image: url("root/Borders/border_vertical.png");
+    width: 20px;
+    background-size: 100% 100%;
+}
+
+.minefield-bottom-border{
+    height: 20px;
+    background-size: 100% 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.minefield-bottom-border-left{
+    background-image: url("root/Borders/corner_bottom_left.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.minefield-bottom-border-horizontal{
+    background-image: url("root/Borders/border_horizontal.png");
+    height: inherit;
+    background-size: inherit;
+    width: 100%
+}
+
+.minefield-bottom-border-right{
+    background-image: url("root/Borders/corner_bottom_right.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.scoreboard-border-top{
+    height: 20px;
+    background-size: 100% 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.scoreboard-border-top-left{
+    background-image: url("root/Borders/corner_up_left.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.scoreboard-border-top-horizontal{
+    background-image: url("root/Borders/border_horizontal.png");
+    height: inherit;
+    background-size: inherit;
+    width: 100%
+}
+
+.scoreboard-border-top-right{
+    background-image: url("root/Borders/corner_up_right.png");
+    width: 20px;
+    height: inherit;
+    background-size: inherit;
+}
+
+.scoreboard-border-left{
+    background-image: url("root/Borders/border_vertical.png");
+    width: 20px;
+    background-size: 100% 100%;
+}
+
+.scoreboard-border-right{
+    background-image: url("root/Borders/border_vertical.png");
+    width: 20px;
+    background-size: 100% 100%;
+}
+
+/*Sets the background of the cells*/
 .flagged{
-    background-image: url("./root/minesweeper_flag.svg") !important;
-    background-size: 40px 40px !important;
+    background-image: url("root/Cells/flag.svg") !important;
 }
 
 .bomb{
-    background-image: url("./root/Minesweeperlogo.jpg") !important;
-    background-size: 40px 40px !important;
+    background-image: url("root/Cells/mine.svg") !important;
 }
+
+.red-bomb{
+    background-image: url("root/Cells/mine_red.svg") !important;
+}
+
+.type0{
+    background-image: url("root/Cells/type0.svg") !important;
+}
+
+.type1{
+    background-image: url("root/Cells/type1.svg") !important;
+}
+
+.type2{
+    background-image: url("root/Cells/type2.svg") !important;
+}
+
+.type3{
+    background-image: url("root/Cells/type3.svg") !important;
+}
+
+.type4{
+    background-image: url("root/Cells/type4.svg") !important;
+}
+
+.type5{
+    background-image: url("root/Cells/type5.svg") !important;
+}
+
+.type6{
+    background-image: url("root/Cells/type6.svg") !important;
+}
+
+.type7{
+    background-image: url("root/Cells/type7.svg") !important;
+}
+
+.type8{
+    background-image: url("root/Cells/type8.svg") !important;
+}
+
+
+
+

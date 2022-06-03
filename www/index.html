@@ -3,27 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>Rust WASM Minesweeper</title>
-    <link rel="icon" type="image/x-icon" href="root/Minesweeperlogo.jpg">
+    <link rel="icon" type="image/x-icon" href="root/logo.jpg">
     <link rel="stylesheet" href="index.css">
     <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 </head>
 <body>
     <script src="bootstrap.js"></script>
     <div id="root">
-        <div class="minesweeper-scoreboard">
-            <div class="minesweeper-counter" id="bomb-counter">
-                000
-            </div>
-            <button class="minesweeper-start-button">
-                🙂
-            </button>
+        <div class="scoreboard">
+            <div class="scoreboard-border-top">
+                <div class="scoreboard-border-top-left">
 
-            <div class="minesweeper-counter" id="time-counter">
-                000
+                </div>
+                <div class="scoreboard-border-top-horizontal">
+
+                </div>
+                <div class="scoreboard-border-top-right">
+
+                </div>
+            </div>
+            <div class="scoreboard-container">
+                <div class="scoreboard-border-left">
+
+                </div>
+
+                <div class="scoreboard-counter" id="bomb-counter">
+                    000
+                </div>
+                <div class="scoreboard-start-button-container">
+                    <button class="scoreboard-start-button">
+                        🙂
+                    </button>
+                </div>
+
+
+                <div class="scoreboard-counter" id="time-counter">
+                    000
+                </div>
+
+                <div class="scoreboard-border-right">
+
+                </div>
             </div>
         </div>
-        <div class="minesweeper-container" id="minesweeper-container">
+        <div class="minesweeper">
+            <div class="minefield-top-border">
+                <div class="minefield-top-border-left">
 
+                </div>
+                <div class="minefield-top-border-horizontal">
+
+                </div>
+                <div class="minefield-top-border-right">
+
+                </div>
+            </div>
+            <div class="minefield-container">
+                <div class="minefield-right-border">
+
+                </div>
+                <div class="minefield" id="minefield">
+
+                </div>
+
+                <div class="minefield-left-border">
+
+                </div>
+            </div>
+
+            <div class="minefield-bottom-border">
+                <div class="minefield-bottom-border-left">
+
+                </div>
+                <div class="minefield-bottom-border-horizontal">
+
+                </div>
+                <div class="minefield-bottom-border-right">
+
+                </div>
+            </div>
         </div>
     </div>
 </body>
