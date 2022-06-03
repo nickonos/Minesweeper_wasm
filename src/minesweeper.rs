@@ -5,9 +5,7 @@ use std::borrow::{BorrowMut};
 use crate::minesweeper::State::{Hidden, Flagged, Revealed};
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
-use js_sys::*;
 use std::iter::Iterator;
-use web_sys::console;
 use crate::utils::set_panic_hook;
 
 #[wasm_bindgen]
@@ -84,14 +82,21 @@ impl Minefield {
         bombs
     }
 
-    pub fn lost_game(& mut self, position :Position){
+    pub fn lost_game(&mut self){
+        for y in 0..self.fields.len(){
+            for  x in 0..self.fields[y].len(){
+                if self.fields[y][x].is_bomb{
 
+                    self.fields[y][x].reveal(0);
+                }
+            }
+        }
     }
 
     fn generate_2d_field_vec(
         width: usize,
         height : usize,
-        bombs : Vec<&Position>
+        bombs : Vec<Position>
     ) -> Result<Vec<Vec<Field>>, Error>{
         if height <= 0 {
             return Err(Error::default());
@@ -109,7 +114,7 @@ impl Minefield {
     fn generate_field_vec(
         size: usize,
         pos_y: usize,
-        bombs: &Vec<&Position>
+        bombs: &Vec<Position>
     ) -> Result<Vec<Field>, Error> {
 
         if size <= 0 {
@@ -119,7 +124,7 @@ impl Minefield {
         let mut fields : Vec<Field> = Vec::with_capacity(size);
 
         for pos_x in 0..size {
-            let is_bomb = bombs.iter().find(|x| ***x == Position{x: pos_x, y : pos_y}).is_some();
+            let is_bomb = bombs.iter().find(|x| **x == Position{x: pos_x, y : pos_y}).is_some();
 
             fields.push(Field::new(is_bomb))
         }
@@ -185,22 +190,29 @@ impl Minefield{
     pub fn new(
         width: usize,
         height : usize,
-        bombs : usize
+        bombs : usize,
+        start_position : Position
     ) -> Minefield {
         set_panic_hook();
         let mut rng = rand::thread_rng();
-        let mut bomb :Vec<&Position> = Vec::with_capacity(bombs);
+        let mut bomb :Vec<Position> = Vec::with_capacity(bombs);
         let mut fields : Vec<Position> = Vec::with_capacity(width * height);
+
 
         for y in 0..height{
             for x in 0..width{
+                if start_position.x == x && start_position.y == y{
+                    continue;
+                }
+
                 fields.push(Position::new(x ,y))
             }
         }
 
         for _ in 0..bombs{
             let i = rng.gen_range(0..fields.len());
-            bomb.push(&fields[i])
+            bomb.push( Position::new(fields[i].x ,fields[i].y ));
+            fields.remove(i);
         }
 
         Minefield{
@@ -253,7 +265,7 @@ impl Minefield{
         };
 
         if bomb{
-            self.lost_game(position);
+            self.lost_game();
             return false
         }
 
@@ -293,7 +305,7 @@ impl Display for Minefield {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for x in self.fields.iter(){
             for y in x.iter(){
-                f.write_str(&*(y.display().to_owned() + " "));
+                f.write_str(&*(y.display().to_owned() + " ")).expect("");
             }
             f.write_char('\n')?;
         }
@@ -359,12 +371,6 @@ mod tests{
 
     #[test]
     fn test(){
-        let mut mf = Minefield::new(10, 12, 6).expect("Error setting up Minefield");
-
-        mf.flag_field(Position{ x : 1, y: 1}).expect("Cannot Flag Field");
-
-        mf.click_field(Position{x: 0, y: 0}).expect("Bomb");
-        println!("{}", mf);
-
+        println!("test");
     }
 }

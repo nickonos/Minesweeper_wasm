@@ -2,16 +2,19 @@ import init, {Minefield, Position} from "../pkg/Minesweeper_wasm.js";
 
 class MinesweeperClass{
     constructor() {
-        this.initialize()
+        this.initialize().then(_ => {})
     }
 
     initialize = async () => {
         await init()
+        this.width = 10;
+        this.height = 10;
+        this.bombs = 99;
 
-        this.generateMinefield(10, 8, 80)
+        this.generateMinefield(this.width, this.height)
     }
 
-    generateMinefield(width, height, bombs){
+    generateMinefield(width, height){
         let container = document.getElementById("minefield")
 
         for (let y = 0; y < height; y++){
@@ -29,14 +32,17 @@ class MinesweeperClass{
             }
         }
 
-        this.Minefield = Minefield.new(width, height, bombs);
+
     }
 
     updateMinefield(){
         let array = this.Minefield.get_minefield()
 
         array.map((item, key) => {
-            let cell = document.getElementById("Cell-" + Math.floor(key / 30) + "-" + key % 30)
+            let cell = document.getElementById("Cell-" + Math.floor(key / this.width) + "-" + key % this.width)
+
+            if (!cell)
+                return;
 
             if (item === 11 && !cell.classList.contains("flagged")) {
                 cell.classList.add("flagged")
@@ -58,6 +64,8 @@ class MinesweeperClass{
     }
 
     onCellClick(e){
+
+
         let isFlag = e.ctrlKey
 
         let Cell = e.target
@@ -66,6 +74,10 @@ class MinesweeperClass{
 
         let y = arr[1]
         let x = arr[2]
+
+        if (!this.Minefield){
+            this.Minefield = Minefield.new(this.width, this.height, this.bombs, Position.new( parseInt(x) , parseInt(y)));
+        }
 
         if (!isFlag){
             let success = this.Minefield.click_field(Position.new( parseInt(x) , parseInt(y)))
