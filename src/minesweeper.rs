@@ -8,6 +8,7 @@ use wasm_bindgen::prelude::*;
 use js_sys::*;
 use std::iter::Iterator;
 use web_sys::console;
+use crate::utils::set_panic_hook;
 
 #[wasm_bindgen]
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -186,6 +187,7 @@ impl Minefield{
         height : usize,
         bombs : usize
     ) -> Minefield {
+        set_panic_hook();
         let mut rng = rand::thread_rng();
         let mut bomb :Vec<&Position> = Vec::with_capacity(bombs);
         let mut fields : Vec<Position> = Vec::with_capacity(width * height);
@@ -200,7 +202,6 @@ impl Minefield{
             let i = rng.gen_range(0..fields.len());
             bomb.push(&fields[i])
         }
-
 
         Minefield{
             fields: Minefield::generate_2d_field_vec(width, height, bomb).expect("Incorrect input"),

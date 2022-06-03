@@ -1,9 +1,5 @@
 mod minesweeper;
-
 mod utils;
-
-use wasm_bindgen::prelude::*;
-
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
