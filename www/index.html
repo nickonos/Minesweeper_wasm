@@ -12,7 +12,42 @@
     <div class="settings-overlay" id="settings-overlay">
         <div class="settings">
             <button class="settings-close-button" onclick="OnSettingsCloseClick()">X</button>
-
+            <div class="difficulty-select-container">
+                <button onclick="OnEasyClick()">Easy</button>
+                <button onclick="OnMediumClick()">Medium</button>
+                <button onclick="OnHardClick()">Hard</button>
+                <button onclick="OnDifficultyCustomClick()">Custom</button>
+            </div>
+            <div class="custom-sliders-container" id="custom-sliders">
+                <div class="slider-container">
+                    <label for="width-slider">
+                        Width
+                    </label>
+                    <input type="range" min="3" max="40" value="30" class="settings-slider" id="width-slider" onchange="OnWidthSliderChange()">
+                    <span id="width-value">
+                    30
+                </span>
+                </div>
+                <div class="slider-container">
+                    <label for="height-slider">
+                        Height
+                    </label>
+                    <input type="range" min="3" max="20" value="16" class="settings-slider" id="height-slider" onchange="OnHeightSliderChange()">
+                    <span id="height-value">
+                    16
+                </span>
+                </div>
+                <div class="slider-container">
+                    <label for="bombs-slider">
+                        Bombs
+                    </label>
+                    <input type="range" min="1" max="479" value="99" class="settings-slider" id="bombs-slider" onchange="OnBombsSliderChange()">
+                    <span id="bombs-value">
+                    99
+                </span>
+                </div>
+            </div>
+            <button class="update-settings-button" id="update-settings"></button>
         </div>
     </div>
     <div class="settings-button-container">
@@ -37,7 +72,7 @@
                 </div>
 
                 <div class="scoreboard-counter" id="bomb-counter">
-                    000
+                    0
                 </div>
                 <div class="scoreboard-start-button-container">
                     <button class="scoreboard-start-button" id="start-button">
@@ -47,7 +82,7 @@
 
 
                 <div class="scoreboard-counter" id="time-counter">
-                    000
+                    0
                 </div>
 
                 <div class="scoreboard-border-right">
@@ -100,6 +135,68 @@
 
         function OnSettingsCloseClick(){
             document.getElementById("settings-overlay").style.display = "none";
+        }
+
+        function OnDifficultyCustomClick(){
+            document.getElementById("custom-sliders").style.display = "block";
+
+            document.getElementById("width-value").innerHTML = document.getElementById("width-slider").value;
+            document.getElementById("height-value").innerHTML = document.getElementById("height-slider").value;
+            document.getElementById("bombs-value").innerHTML = document.getElementById("bombs-slider").value;
+        }
+
+        function OnEasyClick(){
+            document.getElementById("custom-sliders").style.display = "none";
+
+            document.getElementById("width-slider").value = 9;
+            document.getElementById("height-slider").value = 9;
+            document.getElementById("bombs-slider").value = 10;
+        }
+
+        function OnMediumClick(){
+            document.getElementById("custom-sliders").style.display = "none";
+
+            document.getElementById("width-slider").value = 16;
+            document.getElementById("height-slider").value = 16;
+            document.getElementById("bombs-slider").value = 40;
+        }
+
+        function OnHardClick(){
+            document.getElementById("custom-sliders").style.display = "none";
+
+            document.getElementById("width-slider").value = 30;
+            document.getElementById("height-slider").value = 16;
+            document.getElementById("bombs-slider").value = 99;
+        }
+
+        function OnWidthSliderChange(){
+            document.getElementById("width-value").innerHTML = document.getElementById("width-slider").value;
+
+            setBombsMaxValue();
+        }
+
+        function OnHeightSliderChange(){
+            document.getElementById("height-value").innerHTML = document.getElementById("height-slider").value;
+
+            setBombsMaxValue();
+        }
+
+        function OnBombsSliderChange(){
+            document.getElementById("bombs-value").innerHTML = document.getElementById("bombs-slider").value;
+        }
+
+        function setBombsMaxValue(){
+            let max = (document.getElementById("height-slider").value * document.getElementById("width-slider").value) - 1;
+
+            let slider = document.getElementById("bombs-slider");
+
+            if (slider.value > max){
+                slider.value = max;
+                OnBombsSliderChange();
+            }
+
+
+            slider.setAttribute("max", max.toString());
         }
     </script>
 </body>

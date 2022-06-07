@@ -8,22 +8,24 @@ class MinesweeperClass{
     initialize = async () => {
         await init()
 
-        this.initStartButton()
-
-        this.width = 10;
-        this.height = 10;
-        this.bombs = 20;
+        this.width = document.getElementById("width-slider").value ?? 16;
+        this.height = document.getElementById("height-slider").value ?? 16;
+        this.bombs = document.getElementById("bombs-slider").value ?? 40;
         this.failed = false;
         this.Minefield = undefined;
+        if (this.interval){
+            window.clearInterval(this.interval);
+        }
 
-        this.removeMinefield()
+        this.initHTML();
 
+        this.removeMinefield();
 
-        this.generateMinefield(this.width, this.height)
+        this.generateMinefield(this.width, this.height);
     }
 
     removeMinefield(){
-        let minefield = document.getElementById("minefield")
+        let minefield = document.getElementById("minefield");
 
         while (minefield.firstChild){
             minefield.removeChild(minefield.lastChild)
@@ -31,28 +33,26 @@ class MinesweeperClass{
     }
 
     generateMinefield(width, height){
-        let container = document.getElementById("minefield")
+        let container = document.getElementById("minefield");
 
         for (let y = 0; y < height; y++){
-            let cellContainer = document.createElement("div")
-            cellContainer.setAttribute("id", "Cell-Container-"+ y)
-            cellContainer.setAttribute("class", "minesweeper-cell-container")
-            container.appendChild(cellContainer)
+            let cellContainer = document.createElement("div");
+            cellContainer.setAttribute("id", "Cell-Container-"+ y);
+            cellContainer.setAttribute("class", "minesweeper-cell-container");
+            container.appendChild(cellContainer);
 
             for (let x =0; x < width; x++){
-                let div = document.createElement("div")
-                div.setAttribute("id", "Cell-"+ y  + "-" + x)
-                div.setAttribute("class", "minesweeper-cell")
-                div.onclick = (e => this.onCellClick(e))
-                cellContainer.appendChild(div)
+                let div = document.createElement("div");
+                div.setAttribute("id", "Cell-"+ y  + "-" + x);
+                div.setAttribute("class", "minesweeper-cell");
+                div.onclick = (e => this.onCellClick(e));
+                cellContainer.appendChild(div);
             }
         }
-
-
     }
 
-    initStartButton(){
-        let button = document.getElementById("start-button")
+    initHTML(){
+        let button = document.getElementById("start-button");
 
         if (!button)
             console.error("Error finding start button")
@@ -60,6 +60,19 @@ class MinesweeperClass{
         button.onclick = async () => {
             await this.initialize()
         }
+
+        let updateButton = document.getElementById("update-settings");
+
+        if (!updateButton)
+            console.error("Error finding update button")
+
+        updateButton.onclick = async () => {
+            await this.initialize();
+            document.getElementById("settings-overlay").style.display = "none";
+        }
+
+        document.getElementById("bomb-counter").innerHTML = ((this.height * this.width) - this.bombs).toString()
+        document.getElementById("time-counter").innerHTML = "0";
     }
 
     updateMinefield(x, y){
@@ -83,8 +96,19 @@ class MinesweeperClass{
                 cell.classList.add("bomb")
             }
 
-            if (item < 10) {
+            if (item < 10 &&
+                !cell.classList.contains("type0") &&
+                !cell.classList.contains("type1") &&
+                !cell.classList.contains("type2") &&
+                !cell.classList.contains("type3") &&
+                !cell.classList.contains("type4") &&
+                !cell.classList.contains("type5") &&
+                !cell.classList.contains("type6") &&
+                !cell.classList.contains("type7") &&
+                !cell.classList.contains("type8")
+            ) {
                 cell.classList.add("type" + item.toString());
+                this.updateScore();
             }
         })
 
@@ -94,6 +118,24 @@ class MinesweeperClass{
             cell.classList.add("red-bomb")
         }
 
+    }
+
+    updateTimer(){
+        let timer = document.getElementById("time-counter");
+
+        let time = parseInt(timer.innerHTML);
+        time++;
+
+        timer.innerHTML = time.toString();
+    }
+
+    updateScore(){
+        let counter = document.getElementById("bomb-counter");
+
+        let count = parseInt(counter.innerHTML);
+        count--;
+
+        counter.innerText = count.toString();
     }
 
     onCellClick(e){
@@ -111,6 +153,7 @@ class MinesweeperClass{
 
         if (!this.Minefield){
             this.Minefield = Minefield.new(this.width, this.height, this.bombs, Position.new( parseInt(x) , parseInt(y)));
+            this.interval = window.setInterval(this.updateTimer, 1000);
         }
 
         if (!isFlag){
