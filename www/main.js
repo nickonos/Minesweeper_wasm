@@ -7,11 +7,27 @@ class MinesweeperClass{
 
     initialize = async () => {
         await init()
+
+        this.initStartButton()
+
         this.width = 10;
         this.height = 10;
-        this.bombs = 99;
+        this.bombs = 20;
+        this.failed = false;
+        this.Minefield = undefined;
+
+        this.removeMinefield()
+
 
         this.generateMinefield(this.width, this.height)
+    }
+
+    removeMinefield(){
+        let minefield = document.getElementById("minefield")
+
+        while (minefield.firstChild){
+            minefield.removeChild(minefield.lastChild)
+        }
     }
 
     generateMinefield(width, height){
@@ -35,7 +51,18 @@ class MinesweeperClass{
 
     }
 
-    updateMinefield(){
+    initStartButton(){
+        let button = document.getElementById("start-button")
+
+        if (!button)
+            console.error("Error finding start button")
+
+        button.onclick = async () => {
+            await this.initialize()
+        }
+    }
+
+    updateMinefield(x, y){
         let array = this.Minefield.get_minefield()
 
         array.map((item, key) => {
@@ -61,10 +88,17 @@ class MinesweeperClass{
             }
         })
 
+        if(this.failed){
+            let cell = document.getElementById("Cell-" + y + "-" + x)
+            cell.classList.remove("bomb")
+            cell.classList.add("red-bomb")
+        }
+
     }
 
     onCellClick(e){
-
+        if (this.failed)
+            return;
 
         let isFlag = e.ctrlKey
 
@@ -83,13 +117,13 @@ class MinesweeperClass{
             let success = this.Minefield.click_field(Position.new( parseInt(x) , parseInt(y)))
 
             if (!success){
-                console.log("Failed")
+                this.failed = true;
             }
         }else{
              this.Minefield.flag_field(Position.new( parseInt(x) , parseInt(y)))
         }
 
-        this.updateMinefield();
+        this.updateMinefield(x, y);
     }
 }
 

@@ -29,6 +29,61 @@ body{
     text-align: center;
 }
 
+/**/
+.settings-button-container{
+    right: 10px;
+    top: 10px;
+    position: fixed;
+}
+
+.settings-button{
+    all: unset;
+    background-image: url("root/settings.png");
+    width: 40px;
+    height: 40px;
+    background-size: 40px 40px;
+    border-radius: 25%;
+}
+
+.settings-button:hover{
+    background-color: #bfbfbf;
+}
+
+.settings-overlay{
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.settings{
+    width: 60vh;
+    height: 60vh;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 40px;
+}
+
+.settings-close-button{
+    all: unset;
+    float: right;
+    position: relative;
+    border-radius: 50%;
+    border: solid 1px #000000;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    background-color: #ffffff;
+}
+
 /*Scoreboard*/
 .scoreboard-container{
     flex-direction: row;
@@ -83,7 +138,9 @@ body{
     background-image: url("root/Borders/border_horizontal.png");
     height: inherit;
     background-size: inherit;
-    width: 100%
+    width: -webkit-calc(100% - 40px);
+    width:    -moz-calc(100% - 40px);
+    width:         calc(100% - 40px);
 }
 
 .minefield-top-border-right{
@@ -156,7 +213,9 @@ body{
     background-image: url("root/Borders/border_horizontal.png");
     height: inherit;
     background-size: inherit;
-    width: 100%
+    width: -webkit-calc(100% - 40px);
+    width:    -moz-calc(100% - 40px);
+    width:         calc(100% - 40px);
 }
 
 .scoreboard-border-top-right{

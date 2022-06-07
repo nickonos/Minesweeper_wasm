@@ -9,6 +9,15 @@
 </head>
 <body>
     <script src="bootstrap.js"></script>
+    <div class="settings-overlay" id="settings-overlay">
+        <div class="settings">
+            <button class="settings-close-button" onclick="OnSettingsCloseClick()">X</button>
+
+        </div>
+    </div>
+    <div class="settings-button-container">
+        <button class="settings-button" id="settings-button" onclick="OnSettingsClick()"></button>
+    </div>
     <div id="root">
         <div class="scoreboard">
             <div class="scoreboard-border-top">
@@ -31,7 +40,7 @@
                     000
                 </div>
                 <div class="scoreboard-start-button-container">
-                    <button class="scoreboard-start-button">
+                    <button class="scoreboard-start-button" id="start-button">
                         🙂
                     </button>
                 </div>
@@ -84,5 +93,14 @@
             </div>
         </div>
     </div>
+    <script>
+        function OnSettingsClick(){
+            document.getElementById("settings-overlay").style.display = "flex";
+        }
+
+        function OnSettingsCloseClick(){
+            document.getElementById("settings-overlay").style.display = "none";
+        }
+    </script>
 </body>
 </html>
